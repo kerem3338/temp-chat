@@ -5,7 +5,7 @@ Simple disposable chat site with Python backend
 - Install Python
 - pip install websocket-server
 - Replace the host part in the Python file with your IP address or domain
-- Find the Change me section in chat.html and enter the IP address or domain you entered in the python file in the "ws://localhost:86" localhost section there.
+- Find the Change me section in chat.html and enter the IP address or domain you entered in the `config.ini` file in the "ws://localhost:86" localhost section there.
 - And start the web server and web socket
 
 Finish

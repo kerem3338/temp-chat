@@ -1,15 +1,19 @@
 from websocket_server import WebsocketServer
-
 import json
+import configparser
 
-bos_idler = []
+empty_ids = []
 
 clients_a = []
 
 ws_id_and_room_id = []
 
-# enter host
-server = WebsocketServer(host="ip adress", port=86)
+# Reading from config
+config = configparser.ConfigParser()
+config.read("config.ini")
+
+# Server details
+server = WebsocketServer(host=config["server"]["host"], port=int(config["server"]["port"]))
 
 
 def replacechars(msg):
@@ -21,17 +25,17 @@ def replacechars(msg):
 
 def newclient(client, server):
     print("Client connected.")
-    bos_idler.append(str(client['id']))
+    empty_ids.append(str(client['id']))
 
 def messagerec(client, server, message):
     message_replaced = replacechars(message)
 
-    if str(client['id']) in bos_idler:
+    if str(client['id']) in empty_ids:
         if json.loads(message_replaced)["nickname"] == "null" or json.loads(message_replaced)["nickname"] == "":
             server.send_message(client, json.dumps({ "nickname": "system", "msg": "Please Enter Nickname" }))
             return
         ws_id_and_room_id.append({"ws_id": str(client['id']), "room_id": json.loads(message_replaced)["msg"], "nickname": json.loads(message_replaced)["nickname"] })
-        bos_idler.remove(str(client['id']))
+        empty_ids.remove(str(client['id']))
         clients_a.append(client)
 
         for author_ws_id_and_room_id in ws_id_and_room_id:
@@ -83,6 +87,8 @@ server.set_fn_new_client(newclient)
 server.set_fn_message_received(messagerec)
 server.set_fn_client_left(clientleft)
 
+
+print("[info] Ready")
 server.run_forever()
 
 
